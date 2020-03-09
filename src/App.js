@@ -1,5 +1,4 @@
 import React , { Component } from 'react';
-import * as utils from "./helpers/helpers.js";
 
 import Home from "./components/Home";
 import './css/App.css';
