@@ -1,47 +1,30 @@
 import React , { Component } from 'react';
-import NumberFormat from "react-number-format";
-
 import * as utils from "../helpers/helpers.js";
+import Filters from "./Filters";
 import GLOBAL from '../data/global.js'
 
-import Filters from "./Filters";
-
-class Table extends Component {
+class PoliciesTable extends Component {
     constructor() {
         super();
         this.state = {
             clients: [],
             currentPage: 1,
-            itemsPerPage: 25,
-            policies: []    
+            itemsPerPage: 25    
         };
     }    
     
-    getClients = () => {
-        utils.getDataFromAPI('clients');    
+    getData = () => {
+        utils.getDataFromAPI('policies');    
         setTimeout(() => {
             this.setState({
                 clients: GLOBAL.clients
             });
         }, 100);
-        
-    }
-
-    getPolicies = () => {
-        utils.getDataFromAPI('policies');
-        setTimeout(() => {
-            this.setState({
-                policies: GLOBAL.policies
-            });
-            console.log(this.state.policies);
-            utils.setPoliciesListByClient(this.state.policies)
-        }, 200);
-        
-    }
+      }
 
     componentDidMount() { 
-        this.getClients();
-        this.getPolicies();
+        this.getData();
+        //console.log(utils.setPoliciesListByClient())
     }
 
     handleClick = (event) => {
@@ -64,18 +47,14 @@ class Table extends Component {
     }
 
     filterUserName = (value) => {
-        if(value.length > 0)
-        {
-            let clientsList = utils.searchUserBy(GLOBAL.clients, "name", value);
-            this.setState({
-                clients: clientsList
-            })  
-        }
+        let clientsList = utils.searchUserBy(GLOBAL.clients, "name", value);
+        this.setState({
+            clients: clientsList
+        })  
     }
 
-
     render () {
-        const { clients, currentPage, itemsPerPage, policies } = this.state;
+        const { clients, currentPage, itemsPerPage } = this.state;
 
         // Logic for displaying current clients per page
         const indexOfLastItem = currentPage * itemsPerPage;
@@ -89,7 +68,6 @@ class Table extends Component {
                 <td>{client.name}</td>
                 <td>{client.email}</td>
                 <td>{client.role}</td>
-                <td>{this.policiesList(client.id)}</td>
             </tr>
         );
 
@@ -114,28 +92,6 @@ class Table extends Component {
         return (
             <div>
                 <div className="row">
-                    <div className="col-md-6">
-                        <Filters filterUserRole={this.filterUserRole} filterUserName={this.filterUserName} />
-                    </div>
-                </div>
-
-                <div className="row">
-                    <div className="col-md-6 container-table">
-                        <table className="table table-bordered">
-
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>eMail</th>
-                                    <th>Role</th>
-                                    <th>Policies</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {clientsList}
-                            </tbody>
-                        </table>
-                    </div>
                     <div className="col-md-6 policies-table">
                         <table className="table table-bordered">
                             <thead>
@@ -165,4 +121,4 @@ class Table extends Component {
     }
 }
 
-export default Table;
+export default PoliciesTable;

@@ -1,4 +1,6 @@
-li { padding-right: 10px }
+
+li { padding-right: 15px }
+small { font-size: 0.5em }
 
 .App {
   text-align: center;
@@ -35,15 +37,21 @@ li { padding-right: 10px }
     padding: 15px;
     margin: 0 auto;
 }
+
+section { margin-top: 60px }
+section .row, .container-table, .policies-table { padding-top: 15px }
+
 .form-signin > .form-label-group, .form-signin button {
   margin-top: 10px;
 }
 
-.container-table .filtering { margin-bottom: 15px; text-align: right }
+.search-buttons { text-align: left }
+.role-filters, .pagination-buttons { text-align: right }
+.pagination-buttons { padding-bottom: 15px }
 .container-table .filters-row { margin-top: 100px }
-.container-table { width: 100vh; font-size: 0.8em; margin-top: 60px }
-.container-table th { background-color: slategray }
+.container-table { font-size: 1em; }
+.container-table th, .policies-table th { background-color: slategray; color: white }
 .container-table th:nth-child(1) { width: 25% }
 .container-table th:nth-child(2) { width: 65% }
 .container-table th:nth-child(1) { width: 10% }
-.container-table .current { background-color: green }
+.container-table .current { background-color: green; color: white }

@@ -14,7 +14,7 @@ class Filters extends Component {
         });
     }
 
-    clearFilter = () => {
+    clearInput = () => {
         this.setState({
             name: ""
         });
@@ -26,33 +26,32 @@ class Filters extends Component {
         return (
             <div className="filtering">
                 <div className="row">
-                    <div className="col-6">
-                        <div className="input-group">
-                            <input type="text" name="name" placeholder="Enter a username..." className="form-control" 
-                                value={ this.state.name }
-                                onChange={ this.handleChange }/>
+                    <div className="col-8">
+                        <div className="input-group input-group-sm mb-3">
+                            <input type="text" name="name" className="form-control" aria-label="Username" placeholder="Enter a username..." aria-describedby="inputGroup-sizing-sm"
+                                value={this.state.name} onChange={this.handleChange} />
                             <div className="input-group-prepend">
-                                <button className="btn btn-sm btn-info" 
-                                    onClick={() => this.props.filterUserName(this.state.name) }>
+                                <button type="button" className="btn btn-sm btn-info"
+                                    onClick={() => this.props.filterUserName(this.state.name)}>
                                     <i className="fa fa-search"></i>
                                 </button>
-                                <button className="btn btn-sm btn-warning" 
-                                    onClick={this.clearFilter }>
+                                <button type="button" className="btn btn-sm btn-warning"
+                                    onClick={this.clearInput}>
                                     <i className="fa fa-eraser"></i>
-                                </button>  
+                                </button>
                             </div>
-                        </div> 
+                        </div>
+                        
                     </div>
-
-                    <div className="col-6">
-                        <div className="btn-group" role="group" aria-label="Basic example">
-                            <button className="btn btn-default"
+                    <div className="col-4 role-filters">
+                        <div className="btn-group" role="group" aria-label="Filters by role">
+                            <button type="button" className="btn btn-sm btn-secondary"
                                 onClick={() => this.props.filterUserRole('all')}>All</button>
-                            <button className="btn btn-default" 
+                            <button type="button" className="btn btn-sm btn-secondary"
                                 onClick={() => this.props.filterUserRole('admin')}>Admins</button>
-                            <button className="btn btn-default" 
-                                onClick={() => this.props.filterUserRole('user')}>Users</button> 
-                        </div>     
+                            <button type="button" className="btn btn-sm btn-secondary"
+                                onClick={() => this.props.filterUserRole('user')}>Users</button>
+                        </div>
                     </div>
                 </div>
             </div>   

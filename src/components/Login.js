@@ -12,47 +12,53 @@ class Login extends Component {
   }
 
   componentDidMount() {
-    utils.getDataFromAPI('clients');
+    utils.getDataFromAPI('users');
   }
 
   handleChange = (event) => {
     this.setState({ emailToFind: event.target.value });
   }
 
-  // This arroy
   handleSubmit = (event) => {
     event.preventDefault();
-    let user_data = utils.checkUserExist(GLOBAL.clients, "email", this.state.emailToFind);
-    let isLogged = user_data.logged;
 
-    if(isLogged) 
-    {
-      this.props.handler(isLogged, user_data)
+    utils.checkUserExist(GLOBAL.clients, "email", this.state.emailToFind);
+    let userData = utils.getAuthData();
+    let isLogged = userData.logged;
+
+    if(isLogged) {
+      this.props.handler(isLogged, userData)
     }  
   }
 
   render() {
-      return (
-          <div className="row">
-              <div className="col-12">
-                    <div className="text-center">
-                        <form className="form-signin" onSubmit={this.handleSubmit}>
-                            <div className="text-center mb-4">
-                              <h1 className="h3 mb-3 font-weight-normal">Insurance Administration</h1>
-                            </div>
-              
-                            <div className="form-label-group">
-                              <input type="email" id="email" className="form-control" placeholder="Email address" onChange={this.handleChange} />
-                            </div>
-
-                            <button className="btn btn-lg btn-primary btn-block" type="submit">
-                              Sign in
-                            </button>
-                        </form>
-                    </div>
-              </div>
+    return (
+      <div className="text-center">
+        <div className="row">
+          <div className="col-12">
+            <h1 className="mb-3">Insurance</h1>
           </div>
-      )
+        </div>
+        
+        <div className="row">
+          <div className="col-12">
+            <h3>Login form</h3>
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-12">
+            <form className="form-signin" onSubmit={this.handleSubmit}>
+              <div className="form-label-group">
+                <input type="email" id="email" className="form-control" placeholder="Email address" onChange={this.handleChange} />
+              </div>
+
+              <button className="btn btn-lg btn-primary btn-block" type="submit"> Sign in </button>
+            </form>
+          </div>
+        </div>    
+      </div>
+    )
   }
 }
 
