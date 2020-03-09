@@ -1,4 +1,61 @@
-import GLOBAL from '../global.js'
+import GLOBAL from '../data/global.js'
+
+export function setAuthData(logged, name = "", role = "", email = "")
+{   
+    let data = {
+        logged: logged,
+        name: name,
+        role: role,
+        email: email
+    };
+
+    localStorage.setItem('user', JSON.stringify(data));
+}
+
+export function getAuthData()
+{
+    return JSON.parse(localStorage.getItem('user'));
+}
+
+export function getDataFromAPI(itemName)
+{
+    let xhr = new XMLHttpRequest();
+    let itemURL = itemName === 'clients' || itemName === 'users' ? GLOBAL.api_clients : GLOBAL.api_policies;
+
+    xhr.addEventListener("load", () => {
+        let list = JSON.parse(xhr.responseText);
+        if(itemName === 'users') {
+            GLOBAL.clients = this.filterBy(localStorage.getItem("users"));
+        } else {
+            itemName === "clients" ? GLOBAL.clients = list.clients : GLOBAL.policies = list.policies;  
+        }  
+    });
+
+    xhr.open("GET", GLOBAL.api_base_url + itemURL);
+    xhr.send();
+}
+
+/**
+ * This method set list of policies ordering by client
+ *
+ * @param {array} array
+ */
+export function setPoliciesListByClient(obj)
+{
+    let qtyOfPolicies = obj.length;
+    let totalInsured = this.sum(obj, 'amountInsured');
+    console.log(totalInsured);
+    let policiesGrouped = groupBy(obj, 'clientId');
+    console.log(policiesGrouped);
+    
+    /* let itemsList = {
+        qty: qtyOfPolicies,
+        totalInsured: totalInsured,
+        policies: []
+    }
+    
+    return policiesGrouped; */
+}
 
 /**
  * This method return the whole array from any key if field value is null, 
@@ -8,11 +65,12 @@ import GLOBAL from '../global.js'
  * @param {string} field 
  * @param {string} value 
  */
-export function filterBy(itemsList, field = null, value = null) {
-    var filtered = [];
-    var obj = JSON.parse(itemsList);
+export function filterBy(array, field = null, value = null)
+{
+    let filtered = [];
+    let obj = JSON.parse(array);
 
-    for (var key in obj)
+    for (let key in obj)
     {
         obj[key].forEach( (item) => {
             if(field === null) {
@@ -29,13 +87,33 @@ export function filterBy(itemsList, field = null, value = null) {
     return filtered;
 }
 
-export function searchUserBy(obj, field, value) {
+export function filterByKeyName(array, keyName)
+{
+    let key = keyName; 
+    let list;
+    console.log(array);
+    array.some((v) => Object.keys(v).indexOf(key) !== -1 && (list = v[key]), list);
+    
+    return list;
+}
+
+/**
+ * This method search the value entered in the field selected
+ *
+ * @param {object} obj
+ * @param {string} field
+ * @param {string} value
+ */
+export function searchUserBy(obj, field, value)
+{
     if (value !== "") {
         let filtered = [];
-        for (var i = 0; i < obj.length; i++) {
-            var item = obj[i];
+        for (let i = 0; i < obj.length; i++) {
+            let item = obj[i];
             
             if (item[field] === value) {
+                filtered.push(item);
+            } else if(value === "all") {
                 filtered.push(item);
             }
         }
@@ -45,7 +123,7 @@ export function searchUserBy(obj, field, value) {
 }
 
 /**
- * This method search the value entered in the field selected
+ * This method check if user exist searched by field => value
  * 
  * @param {object} obj 
  * @param {string} field 
@@ -56,14 +134,12 @@ export function checkUserExist(obj, field, value)
     if (value !== "")
     {   
         let flag = false
-        for (var i = 0; i < obj.length; i++) {
-            var item = obj[i];
+        for (let i = 0; i < obj.length; i++) {
+            let item = obj[i];
             if (item[field] === value) {
-                flag = GLOBAL.user_logged = true;
-                GLOBAL.user_name = item['name'];
-                GLOBAL.user_role = item['role'];
-                GLOBAL.user_email = value;
-                break;    
+                this.setAuthData(true, item['name'], item['role'], value);
+                flag = true;
+                break;  
             }               
         }  
 
@@ -75,3 +151,21 @@ export function checkUserExist(obj, field, value)
         return "No value to search!";
     }
 }
+
+export function sum(obj, field) {
+    let total = 0;
+    
+    for (var i = 0; i < obj.length; i++) {
+        total += obj[i][field];
+    }
+
+    return total;
+}
+
+var groupBy = (item, key) => {
+    return item.reduce(function (rv, x) {
+        (rv[x[key]] = rv[x[key]] || []).push(x);
+        return rv;
+    }, {});
+}
+
