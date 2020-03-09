@@ -10,7 +10,7 @@ import Table from "./Table";
 // This method shows one componente or the other one depeding the conditional value
 function useConditionalRendering(conditional, method) {
     let view;
-    if(conditional) {
+    if(conditional === true) {
         view = <div>
                 <header className="App-header">
                     <Navbar handler={method}/>
@@ -27,10 +27,10 @@ function useConditionalRendering(conditional, method) {
 }
 
 class Home extends Component {
-    constructor(props) {
-        super(props)
+    constructor() {
+        super()
         this.state = {
-            logged: GLOBAL.user.logged
+            logged: false
 
         };
     }
