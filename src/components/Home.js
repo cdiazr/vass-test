@@ -43,7 +43,6 @@ class Home extends Component {
 
     // Updating state from child component
     handler = (param, data) => {  
-        console.log(param);
         this.setState({
             logged: param
         })

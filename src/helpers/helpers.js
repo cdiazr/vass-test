@@ -52,21 +52,18 @@ export function getDataFromAPI(itemName)
  *
  * @param {array} array
  */
-export function setPoliciesListByClient(obj)
+export function setPoliciesListByClient(obj, clientID)
 {
-    let qtyOfPolicies = obj.length;
-    let totalInsured = this.sum(obj, 'amountInsured');
+    let qtyOfPolicies = Object.keys(obj).length;
+    let totalInsured = sumField(obj, 'amountInsured');
 
-    let policiesGrouped = groupBy(obj, 'clientId');
-
-    
     let itemsList = {
         qty: qtyOfPolicies,
         totalInsured: totalInsured,
-        policies: policiesGrouped
+        policies: groupBy(obj, 'clientId')
     }
-    
-    return itemsList;
+
+    return getPoliciesByClient(itemsList, clientID);
 }
 
 /**
@@ -146,12 +143,10 @@ export function checkUserExist(obj, field, value)
 {
     if (value !== "")
     {   
-        let flag = false
         for (let i = 0; i < obj.length; i++) {
             let item = obj[i];
             if (item[field] === value) {
                 this.setAuthData(true, item['name'], item['role'], value);
-                flag = true;
                 break;  
             }               
         }  
@@ -164,6 +159,19 @@ export function checkUserExist(obj, field, value)
         return authData;
     } else {
         return "No value to search!";
+    }
+}
+
+function getPoliciesByClient(obj, clientID)
+{
+    let clients = Object.entries(obj.policies);
+    
+    for(let i = 0; i < clients.length; i++)
+    {
+        if(clients[i][0] === clientID)
+        {
+            return clients[i][1];
+        }
     }
 }
 
