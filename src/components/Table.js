@@ -14,7 +14,8 @@ class Table extends Component {
             clients: [],
             currentPage: 1,
             itemsPerPage: 25,
-            policies: []    
+            policies: [],
+            role: ""   
         };
     }    
     
@@ -30,6 +31,9 @@ class Table extends Component {
     componentDidMount() { 
         this.getClients();
         utils.getDataFromAPI('policies');
+
+        let user = utils.getAuthData();
+        this.setState({ role: user.role });
     }
 
     handleClick = (event) => {
@@ -63,6 +67,12 @@ class Table extends Component {
 
     policiesList = (clientID) => {
         let policies = utils.setPoliciesListByClient(GLOBAL.policies, clientID);
+        
+        if(policies === undefined)
+        {
+            policies = [];
+        }
+
         this.setState({ policies: policies })
     }
 
@@ -72,7 +82,7 @@ class Table extends Component {
     }
 
     render () {
-        const { clients, currentPage, itemsPerPage, policies } = this.state;
+        const { clients, currentPage, itemsPerPage } = this.state;
 
         // Logic for displaying current clients per page
         const clientsLastItem = currentPage * itemsPerPage;
@@ -136,7 +146,7 @@ class Table extends Component {
                                     <td>
                                         {renderQtyNumbers}
                                     </td>
-                                    <td colspan="3">
+                                    <td colSpan="100%">
                                         {renderPageNumbers}
                                     </td>
                                 </tr>
@@ -157,7 +167,7 @@ class Table extends Component {
                                     <tr key={policy.id}>
                                         <td><NumberFormat value={policy.amountInsured} displayType={'text'} thousandSeparator={true} suffix={'€'} /></td>
                                         <td>{this.renderFractional(policy.installmentPayment)}</td>
-                                        <td>{moment(policy.inceptionDate).utc().format('dd-mm-YYYY H:mm:ss')}</td>
+                                        <td>{moment(policy.inceptionDate).utc().format('DD-MM-YYYY H:m:ss')}</td>
                                     </tr>
                                 )}
                             </tbody>
