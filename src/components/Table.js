@@ -5,6 +5,7 @@ import * as utils from "../helpers/helpers.js";
 import GLOBAL from '../data/global.js'
 
 import Filters from "./Filters";
+import moment from 'moment';
 
 class Table extends Component {
     constructor() {
@@ -24,24 +25,11 @@ class Table extends Component {
                 clients: GLOBAL.clients
             });
         }, 100);
-        
-    }
-
-    getPolicies = () => {
-        utils.getDataFromAPI('policies');
-        setTimeout(() => {
-            this.setState({
-                policies: GLOBAL.policies
-            });
-            console.log(this.state.policies);
-            utils.setPoliciesListByClient(this.state.policies)
-        }, 200);
-        
     }
 
     componentDidMount() { 
         this.getClients();
-        this.getPolicies();
+        utils.getDataFromAPI('policies');
     }
 
     handleClick = (event) => {
@@ -73,23 +61,33 @@ class Table extends Component {
         }
     }
 
+    policiesList = (clientID) => {
+        let policies = utils.setPoliciesListByClient(GLOBAL.policies, clientID);
+        this.setState({ policies: policies })
+    }
+
+    renderFractional(bool)
+    {
+        return bool? 'Yes' : 'No';
+    }
 
     render () {
         const { clients, currentPage, itemsPerPage, policies } = this.state;
 
         // Logic for displaying current clients per page
-        const indexOfLastItem = currentPage * itemsPerPage;
-        const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-        const currentItems = clients.slice(indexOfFirstItem, indexOfLastItem);
+        const clientsLastItem = currentPage * itemsPerPage;
+        const clientsFirstItem = clientsLastItem - itemsPerPage;
+        const currentItems = clients.slice(clientsFirstItem, clientsLastItem);
 
-        // Logic for displaying table rows with data
-        const clientsList = currentItems.map((client) =>
-            <tr className={this.selectUser(client.email)}
-                key={client.id}>
+        // Logic for displaying table rows
+        const clientsList = currentItems.map((client, index) =>
+            <tr key={index} className={this.selectUser(client.email)}>
                 <td>{client.name}</td>
                 <td>{client.email}</td>
                 <td>{client.role}</td>
-                <td>{this.policiesList(client.id)}</td>
+                <td>
+                    <a onClick={() => this.policiesList(client.id)}><i className="fa fa-eye"></i></a>
+                </td>
             </tr>
         );
 
@@ -99,8 +97,7 @@ class Table extends Component {
             pageNumbers.push(i);
         }
         
-        const renderQtyNumbers = indexOfLastItem + " of " + Object.keys(this.state.clients).length + " records"
-
+        const renderQtyNumbers = clientsLastItem + " of " + Object.keys(this.state.clients).length + " records"
         const renderPageNumbers = pageNumbers.map(number => {
             return (  
                 <div className="btn-group" role="group" aria-label="Filters by role">
@@ -134,6 +131,16 @@ class Table extends Component {
                             <tbody>
                                 {clientsList}
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td>
+                                        {renderQtyNumbers}
+                                    </td>
+                                    <td colspan="3">
+                                        {renderPageNumbers}
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                     <div className="col-md-6 policies-table">
@@ -146,18 +153,15 @@ class Table extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-
+                                {this.state.policies.map((policy) =>
+                                    <tr key={policy.id}>
+                                        <td><NumberFormat value={policy.amountInsured} displayType={'text'} thousandSeparator={true} suffix={'€'} /></td>
+                                        <td>{this.renderFractional(policy.installmentPayment)}</td>
+                                        <td>{moment(policy.inceptionDate).utc().format('dd-mm-YYYY H:mm:ss')}</td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
-                    </div>
-                </div>
-
-                <div className="row">
-                    <div className="col-2">
-                        {renderQtyNumbers}
-                    </div>
-                    <div className="col-4 pagination-buttons">
-                        {renderPageNumbers}
                     </div>
                 </div>
             </div>           
