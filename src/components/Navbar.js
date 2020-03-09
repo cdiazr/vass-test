@@ -1,8 +1,13 @@
 import React , { Component } from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import GLOBAL from '../global.js';
+import * as utils from "../helpers/helpers.js";
+import GLOBAL from '../data/global.js'
 
 class Navbar extends Component {
+    clearAuth() {
+      utils.setAuthData(false);
+    }
+
     render () {
         return (
           <Router>
@@ -13,13 +18,14 @@ class Navbar extends Component {
               >
                 <ul className="navbar-nav mr-auto">
                   <li className="nav-item active">
-                      Home
+                      Dashboard
                   </li>
                 </ul>
                 <ul className="navbar-nav mr-right">
                   <li>
                     {GLOBAL.user_name} <small>({GLOBAL.user_role})</small>
                   </li>
+                  <li><a onClick={this.clearAuth}><i className="fa fa-sign-out"></i></a></li>
                 </ul>
                 <Switch>
                   <Route exact path="/">

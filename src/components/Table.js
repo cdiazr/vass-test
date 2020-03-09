@@ -1,9 +1,10 @@
 import React , { Component } from 'react';
 import * as utils from "../helpers/helpers.js";
-import '../App.css';
+import GLOBAL from '../data/global.js'
+import '../css/App.css';
 
 import Filters from "./Filters";
-import GLOBAL from '../global.js'
+
 
 class Table extends Component {
     constructor() {
@@ -28,7 +29,8 @@ class Table extends Component {
       }
 
     componentDidMount() { 
-        this.getData();
+        utils.getDataFromAPI('clients');
+        utils.getDataFromAPI('policies');
     }
 
     selectUser(email)
@@ -37,11 +39,21 @@ class Table extends Component {
     }
 
     // Updating state from child component
-    filterUser = (param) => {
-        let clientsList = utils.searchUserBy(GLOBAL.clients, "role", param);
+    filterUserRole = (value) => {
+        let clientsList = utils.searchUserBy(GLOBAL.clients, "role", value);
         this.setState({
             clients: clientsList
         })
+    }
+
+    filterUserName = (value) => {
+        if(value.length > 0)
+        {
+            let clientsList = utils.searchUserBy(GLOBAL.clients, "name", value);
+            this.setState({
+                clients: clientsList
+            })  
+        }
     }
 
     render () {
@@ -53,20 +65,40 @@ class Table extends Component {
             </tr>
         );
         return (
-            <div className="container-table">
-                <Filters filterUser={this.filterUser}/>
-                <table className="table table-hovered table-responsive table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>eMail</th>
-                            <th>Role</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {clientsList}    
-                    </tbody>
-                </table>
+            <div className="row">
+                <div className="col-6">
+                    <div className="container-table">
+                        <Filters filterUserRole={this.filterUserRole} filterUserName={this.filterUserName}/>
+                        <table className="table table-hovered table-responsive table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>eMail</th>
+                                    <th>Role</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {clientsList}    
+                            </tbody>
+                        </table>
+                    </div>            
+                </div>
+                <div className="col-6">
+                    <div className="container-table">
+                        <table className="table table-hovered table-responsive table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Amount</th>
+                                    <th>Fractional</th>
+                                    <th>Start Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         )
     }

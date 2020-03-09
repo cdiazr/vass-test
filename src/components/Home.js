@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import GLOBAL from '../global.js'
+import GLOBAL from '../data/global.js'
 
 import Login from "./Login";
 import Navbar from "./Navbar";
@@ -10,16 +10,14 @@ function useConditionalRendering(conditional, method) {
     let view;
     if(conditional) {
         view = <div>
+                <header className="App-header">
+                    <Navbar />
+                </header>
                 <div className="row">
-                    <div className="col-md-12">
-                        <Navbar />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-md-12">
+                    <div className="col-12">
                         <Table />
                     </div>
-                </div>     
+                </div>        
             </div>
     } else {
         view = <Login handler={method}/>
@@ -32,12 +30,13 @@ class Home extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            logged: GLOBAL.user_logged
+            logged: GLOBAL.user.logged
         };
     }
 
     // Updating state from child component
     handler = (param, data) => {  
+        console.log(param);
         this.setState({
             logged: param
         })
