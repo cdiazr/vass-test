@@ -28,3 +28,4 @@ If you wish to deploy the project, use following command `npm run build`
 So you would run the project built running the command `serve -s build`
 
 If you can't use that command, please run `npm install -g serve`
+
